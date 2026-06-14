@@ -78,3 +78,18 @@ You should now have 42 images.
 Generated code that sorts the images into files and confirms that the correct amount of images exist in each one beforehand
 **Change:**
 Added it to part3.py
+
+## Entry 5
+
+**Date and Time:** 06/14/2026, 6:28
+
+**Prompt:**
+Can you explain how to syntax for Sobel, Laplacian, Canny, Prewitt works and provide me with some simple examples? Once again, please don't "Provide me with the answer" I want to see examples
+
+
+**Tool:** ChatGPT
+
+**Response Synopsis:**
+Generated code that showed the proper syntax for applying the different edge detection techniques
+**Change:**
+Plan on applying it to my own code
