@@ -59,3 +59,22 @@ Generated a simple readme structure with titles for the guassian blur section, p
 
 **Change:**
 Copied it into my current readme and filled it out with my own information
+
+## Entry 4
+
+**Date and Time:** 06/14/2026, 6:00
+
+**Prompt:**
+How would I write a program to quickly sort the images into different folders and allocate them space accordingly? Here are the requirements:
+Randomly create 4 equally sized subsets of the images from part 1.
+Each subset should have 42 images.
+Choose a subset to use in the remaining steps.
+You should now have 42 images.
+
+
+**Tool:** ChatGPT
+
+**Response Synopsis:**
+Generated code that sorts the images into files and confirms that the correct amount of images exist in each one beforehand
+**Change:**
+Added it to part3.py
