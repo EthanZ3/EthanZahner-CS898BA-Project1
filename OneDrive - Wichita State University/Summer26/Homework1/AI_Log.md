@@ -93,3 +93,18 @@ Can you explain how to syntax for Sobel, Laplacian, Canny, Prewitt works and pro
 Generated code that showed the proper syntax for applying the different edge detection techniques
 **Change:**
 Plan on applying it to my own code
+
+## Entry 6
+
+**Date and Time:** 06/14/2026, 6:45
+
+**Prompt:**
+Look over the code I have written for the process_selected_subset and check it for errors or improvements to optimize it
+*attached code*
+
+**Tool:** ChatGPT
+
+**Response Synopsis:**
+Shorted parts of the code that were too long and added a section for the 5 image plot for a future function
+**Change:**
+Applyed it to my version of the code and updated the comments to be more in line with my understanding.

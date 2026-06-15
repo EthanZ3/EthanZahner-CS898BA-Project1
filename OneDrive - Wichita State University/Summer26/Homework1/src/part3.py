@@ -153,3 +153,78 @@ def prewitt_edge(gray):
     magnitude = np.sqrt(prewitt_x ** 2 + prewitt_y ** 2)
 
     return normalize_to_uint8(magnitude)
+
+
+def process_selected_subset(selected_subset):
+    #stores paths to the 42 plots
+    plot_paths = []
+
+    # Process each image in the subset
+    for index, input_path in enumerate(selected_subset, start=1):
+        image = cv2.imread(str(input_path))
+
+        if image is None:
+            raise FileNotFoundError(f"Could not read image: {input_path}")
+
+        # convert to grayscale for edge detection
+        gray = convert_to_gray(image)
+
+        #save the image before edge detection
+        input_output_name = f"input_{index:02d}_{input_path.name}"
+        input_output_path = SELECTED_INPUT_DIR / input_output_name
+        cv2.imwrite(str(input_output_path), image)
+
+        # Create edge images
+        sobel = sobel_edge(gray)
+        laplacian = laplacian_edge(gray)
+        canny = canny_edge(gray)
+        prewitt = prewitt_edge(gray)
+
+        # Save
+        cv2.imwrite(str(EDGE_DIR / "sobel" / f"sobel_{index:02d}_{input_path.name}"), sobel)
+        cv2.imwrite(str(EDGE_DIR / "laplacian" / f"laplacian_{index:02d}_{input_path.name}"), laplacian)
+        cv2.imwrite(str(EDGE_DIR / "canny" / f"canny_{index:02d}_{input_path.name}"), canny)
+        cv2.imwrite(str(EDGE_DIR / "prewitt" / f"prewitt_{index:02d}_{input_path.name}"), prewitt)
+
+        # Create the 5-image comparison plot
+        plot_path = make_five_image_plot(
+            index,
+            input_path,
+            image,
+            sobel,
+            laplacian,
+            canny,
+            prewitt
+        )
+
+        plot_paths.append(plot_path)
+
+    return plot_paths
+
+
+def main():
+    # clear old output and make new folders
+    reset_output_folders()
+
+    # Load the 168 images from Part 2
+    part2_images = load_part2_images()
+
+    # Create 4 random subsets of 42 images
+    subsets = create_four_subsets(part2_images)
+
+    # Choose one subset
+    selected_subset = subsets[SELECTED_SUBSET_NUMBER - 1]
+
+    print(f"Loaded {len(part2_images)} images from Part 2.")
+    print("Created 4 subsets of 42 images.")
+    print(f"Using subset {SELECTED_SUBSET_NUMBER} for edge detection.")
+
+    # Run edge detection and make plots
+    plot_paths = process_selected_subset(selected_subset)
+
+
+    print("\nDone.")
+
+
+if __name__ == "__main__":
+    main()
