@@ -154,6 +154,112 @@ def prewitt_edge(gray):
 
     return normalize_to_uint8(magnitude)
 
+def describe_pipeline(filename):
+    #creates text explaining what happened to the image
+    name = filename.lower()
+    steps = ["Original"]
+
+    # Detect the image type from its filename
+    if "grayscale" in name:
+        steps.append("Grayscale")
+    elif "binary" in name:
+        steps.append("Binary")
+    elif "hsv_value_equalized" in name:
+        steps.append("HSV V Equalized")
+        steps.append("BGR")
+    elif "hsv" in name:
+        steps.append("HSV")
+    elif "cielab" in name:
+        steps.append("CIELAB")
+    elif "hls" in name:
+        steps.append("HLS")
+    else:
+        steps.append("BGR")
+
+    #Finds rotatoin and scale in the filename
+    rotate_match = re.search(r"rotate_(-?\d+\.?\d*)_scale_(\d+\.?\d*)", name)
+
+    #Finds translation in the filename
+    translate_match = re.search(r"translate_x(-?\d+)_y(-?\d+)", name)
+
+    #Finds Gaussian blur sigma in the filename
+    sigma_match = re.search(r"gaussian_sigma_(\d+)_(\d+)", name)
+
+    if rotate_match:
+        angle = rotate_match.group(1)
+        scale = rotate_match.group(2)
+        steps.append(f"Affine(Rot:{angle}, Scale:{scale})")
+
+    if translate_match:
+        tx = translate_match.group(1)
+        ty = translate_match.group(2)
+        steps.append(f"Affine(Trans:[{tx},{ty}])")
+
+    if sigma_match:
+        sigma = f"{sigma_match.group(1)}.{sigma_match.group(2)}"
+        steps.append(f"Gaussian Blur(σ:{sigma})")
+
+    return " → ".join(steps)
+
+
+def display_image_for_plot(image):
+    # Grayscale images can be displayed as-is
+    if len(image.shape) == 2:
+        return image
+
+    #Convert BGR to RGB so matplotlib shows colors correctly
+    return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+
+def make_five_image_plot(index, input_path, input_image, sobel, laplacian, canny, prewitt):
+    # Get the image processing steps for the title
+    pipeline = describe_pipeline(input_path.name)
+
+    #Make alarge dark plot
+    fig = plt.figure(figsize=(12, 12), facecolor="#222222")
+
+    # add the main title
+    fig.suptitle(
+        f"Sample {index} Pipeline Trajectory:\n{pipeline}",
+        color="cyan",
+        fontsize=12,
+        y=0.97
+    )
+
+    # Place images similar to the example layout
+    ax_sobel = fig.add_axes([0.36, 0.68, 0.28, 0.18])
+    ax_laplacian = fig.add_axes([0.05, 0.40, 0.28, 0.18])
+    ax_input = fig.add_axes([0.36, 0.40, 0.28, 0.18])
+    ax_canny = fig.add_axes([0.67, 0.40, 0.28, 0.18])
+    ax_prewitt = fig.add_axes([0.36, 0.12, 0.28, 0.18])
+
+    # Put all plot items in one list
+    plot_items = [
+        (ax_sobel, sobel, "Sobel Edge", "gray"),
+        (ax_laplacian, laplacian, "Laplacian Edge", "gray"),
+        (ax_input, display_image_for_plot(input_image), "Input Image", None),
+        (ax_canny, canny, "Canny Edge", "gray"),
+        (ax_prewitt, prewitt, "Prewitt Edge", "gray"),
+    ]
+
+    # add each image to the plot
+    for ax, image, title, cmap in plot_items:
+        ax.set_facecolor("#222222")
+        ax.set_title(title, color="lightgray", fontsize=10)
+
+        if cmap:
+            ax.imshow(image, cmap=cmap)
+        else:
+            ax.imshow(image)
+
+        ax.axis("off")
+
+    # Save the finished plot
+    plot_path = PLOT_DIR / f"plot_{index:02d}_{input_path.stem}.png"
+    fig.savefig(plot_path, facecolor=fig.get_facecolor(), dpi=150)
+    plt.close(fig)
+
+    return plot_path
 
 def process_selected_subset(selected_subset):
     #stores paths to the 42 plots
@@ -222,6 +328,7 @@ def main():
     # Run edge detection and make plots
     plot_paths = process_selected_subset(selected_subset)
 
+    
 
     print("\nDone.")
 

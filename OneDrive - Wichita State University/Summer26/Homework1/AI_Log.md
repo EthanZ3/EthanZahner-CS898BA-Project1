@@ -108,3 +108,17 @@ Look over the code I have written for the process_selected_subset and check it f
 Shorted parts of the code that were too long and added a section for the 5 image plot for a future function
 **Change:**
 Applyed it to my version of the code and updated the comments to be more in line with my understanding.
+
+## Entry 7
+
+**Date and Time:** 06/14/2026, 7:15
+
+**Prompt:**
+I'm struggling a lot with figuring out how to properly do the 5 image plot and get the naming scheme for all the files down and it's becoming bigger than I feel I can reasonably understand. Can you provide me explanations to my code so far and help guide me in the right direction? Specifically how I can automate naming with all the new images to keep them together and place them into the clean 5 image layout
+
+**Tool:** ChatGPT
+
+**Response Synopsis:**
+Gave me an explanation of the code and provided me with a block that searches through the file names in order to keep everything together and organized so that it can be put into the 5 image layout cleanly and generate a new file holding them.
+**Change:**
+Added the changes and used them to keep everything in line and together, added comments based on my understanding and used the advanced code in the final product
