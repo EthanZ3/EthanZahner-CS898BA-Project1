@@ -292,7 +292,7 @@ def process_selected_subset(selected_subset):
         cv2.imwrite(str(EDGE_DIR / "canny" / f"canny_{index:02d}_{input_path.name}"), canny)
         cv2.imwrite(str(EDGE_DIR / "prewitt" / f"prewitt_{index:02d}_{input_path.name}"), prewitt)
 
-        # Create the 5-image comparison plot
+        #Create the 5-image comparison plot
         plot_path = make_five_image_plot(
             index,
             input_path,
@@ -307,6 +307,52 @@ def process_selected_subset(selected_subset):
 
     return plot_paths
 
+def copy_six_random_plots(plot_paths):
+    # pick 6 random plots for the README
+    rng = np.random.default_rng(RANDOM_SEED)
+    selected_indexes = rng.choice(len(plot_paths), size=6, replace=False)
+
+    selected_plot_paths = []
+
+    for output_number, plot_index in enumerate(selected_indexes, start=1):
+        source_path = plot_paths[plot_index]
+        destination_path = README_PLOT_DIR / f"readme_sample_{output_number}_{source_path.name}"
+
+        # copy the selected plot
+        shutil.copy(source_path, destination_path)
+        selected_plot_paths.append(destination_path)
+
+    # Save the selected plot paths to a text file
+    with open(README_PLOT_DIR / "readme_sample_plots.txt", "w") as file:
+        for path in selected_plot_paths:
+            file.write(str(path) + "\n")
+
+    return selected_plot_paths
+
+
+def print_counts():
+    #count the output files
+    input_count = len(list(SELECTED_INPUT_DIR.glob("*.png")))
+    sobel_count = len(list((EDGE_DIR / "sobel").glob("*.png")))
+    laplacian_count = len(list((EDGE_DIR / "laplacian").glob("*.png")))
+    canny_count = len(list((EDGE_DIR / "canny").glob("*.png")))
+    prewitt_count = len(list((EDGE_DIR / "prewitt").glob("*.png")))
+    plot_count = len(list(PLOT_DIR.glob("plot_*.png")))
+    readme_plot_count = len(list(README_PLOT_DIR.glob("*.png")))
+
+    # 42 input images + 168 edge images = 210 images
+    edge_total = input_count + sobel_count + laplacian_count + canny_count + prewitt_count
+
+    print("\nPart 3 Counts")
+    print("----------------")
+    print(f"Selected input images: {input_count}")
+    print(f"Sobel images: {sobel_count}")
+    print(f"Laplacian images: {laplacian_count}")
+    print(f"Canny images: {canny_count}")
+    print(f"Prewitt images: {prewitt_count}")
+    print(f"Total Part 3 before/after images: {edge_total}")
+    print(f"Five-image plots created: {plot_count}")
+    print(f"Random README sample plots: {readme_plot_count}")
 
 def main():
     # clear old output and make new folders
@@ -328,7 +374,15 @@ def main():
     # Run edge detection and make plots
     plot_paths = process_selected_subset(selected_subset)
 
-    
+    # Copy 6 random plots for the README
+    selected_readme_plots = copy_six_random_plots(plot_paths)
+
+    # Print output counts
+    print_counts()
+
+    print("\nSix random plots to add to README:")
+    for path in selected_readme_plots:
+        print(path)
 
     print("\nDone.")
 

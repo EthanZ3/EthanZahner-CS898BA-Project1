@@ -122,3 +122,17 @@ I'm struggling a lot with figuring out how to properly do the 5 image plot and g
 Gave me an explanation of the code and provided me with a block that searches through the file names in order to keep everything together and organized so that it can be put into the 5 image layout cleanly and generate a new file holding them.
 **Change:**
 Added the changes and used them to keep everything in line and together, added comments based on my understanding and used the advanced code in the final product
+
+## Entry 8
+
+**Date and Time:** 06/14/2026, 7:30
+
+**Prompt:**
+Can you write a quick function to randomly pull 6 images and put them into a separate folder for the readme samples? Also add on to our previous readme skeleton with slots for the images and explanations for part3.py
+
+**Tool:** ChatGPT
+
+**Response Synopsis:**
+Gave me a code block and an extended skeleton template for me to implement into the readme
+**Change:**
+Added the samples and the skeleton to the readme after implementing the code block and running the program
