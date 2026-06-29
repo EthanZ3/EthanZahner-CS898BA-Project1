@@ -239,3 +239,19 @@ This project uses Git and GitHub for version control. I forgot to make increment
 
 AI was used to help explain OpenCV tools, project setup, code structure, and README writing. All AI use is recorded in AI_Log.md with the prompt, date and time, tool used, response summary, and changes made because of the response.
 
+# Homework 2 Part 5
+## Part 5: Evaluation and Analysis
+
+For Part 5, I compared the Otsu, Adaptive, and K-Means segmentation results against a manually created ground truth mask of the central figure. The ground truth mask marks the figure in white and the background in black.
+
+K-Means performed the best overall. It had the highest IoU score of 0.1862 and the hihgest Dice score of 0.3140. This means it overlapped with my ground truth mask more than the other methods. Visually, the K-Means mask captured more of the figure than Otsu or Adaptive thresholding, especially around the body and head. However, it still included a lot of background noise, especially around the houses/grass and other high-contrast areas in the background.
+
+Otsu thresholding performed the worst with an IoU of 0.0296 and a Dice score of 0.0574. Otsu uses one global threshold for the whole image which coorelates to this. Since the scene has uneven lighting, shadows, grass, houses, and bright background areas, Otsu selected too much of the background and did not isolate the figure very well. The mask shows large bright regions in the background, which lowered its score against the ground truth.
+
+Adaptive thresholding did slightly better than Otsu, with an IoU of 0.0700 and a Dice score of 0.1309. It handled local lighting changes better because it calculates thresholds in smaller regions of the image. However, this also caused it to pick up a lot of extra texture from the grass, houses, and background objects. The adaptive mask shows many small details and edges, but most of them are not part of the figure. Because of this, it preserved some figure details but created too much background noise.
+
+The multi-channel normalized image made the original dark image much brighter and easier to see. This helped make the figure more visible compared to the raw image from the first homework. However, normalizing all three color channels also increased the contrast of the background. This made parts of the grass, houses, shadows, and porch structures stand out more, which caused the segmentation methods to include extra background pixels. Just to summarize, it helped reveal the figure, but it also made the background noisier for segmentation.
+
+Overall, K-Means was the best method for this image set because it used color information instead of only grayscale intensity. It had the highest overlap with the ground truth mask and preserved more of the central figure. Even though the score was still not very high, it was the most successful of the three methods. I found that the image is difficult to segment because the figure is dark, the background is complex, and several background objects have similar brightness or contrast after normalization.
+
+![Comparison plot](segmentation_comparison_plot.png)
