@@ -292,3 +292,38 @@ python src\homework3_part2_data_pipeline.py
 The results are saved in:
 
 images/output/Homework3/part2/
+
+# Homework 3 Part 3
+# Part 3: Baseline CNN
+
+The baseline CNN was created from scratch using TensorFlow/Keras.
+
+The model contains three convolutional layers with increasing filter sizes:
+
+- 32 filters
+- 64 filters
+- 128 filters
+
+Each convolutional layer is followed by max pooling with the final feature maps then being flattened and passed through a hidden layer with 128 neurons. The output layer has six neurons with softmax activation for the six fish classes.
+
+The baseline training settings were:
+
+- Adam optimizer
+- Learning rate of 0.001
+- Batch size of 32
+- 15 epochs
+
+### Baseline Results
+
+Test loss: 0.5578
+Test accuracy: 0.8301, or 83.01%
+
+The training accuracy reached approximately 90%, while the validation accuracy reached approximately 84%. The model showed mild overfitting during later epochs because the training loss continued to decrease while the validation loss began to level off.
+
+The saved model weights are located at:
+
+models/Homework3/baseline_cnn.weights.h5
+
+The training history, test results, and training curves are located at:
+
+images/output/Homework3/part3/

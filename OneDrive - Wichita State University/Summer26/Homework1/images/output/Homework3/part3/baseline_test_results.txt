@@ -1,0 +1,3 @@
+Baseline CNN Results
+Test loss: 0.5578
+Test accuracy: 0.8301
