@@ -1,0 +1,440 @@
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
+
+
+# settings used throughout the program
+SEED = 42
+IMAGE_SIZE = (128, 128)
+BATCH_SIZE = 32
+
+# Locate the Homework1 project folder
+PROJECT_FOLDER = Path(__file__).resolve().parents[1]
+
+# Location of the fish images
+FISH_FOLDER = (
+    PROJECT_FOLDER
+    / "images"
+    / "input"
+    / "Homework3"
+    / "Fish"
+)
+
+# Location where the results will be saved
+OUTPUT_FOLDER = (
+    PROJECT_FOLDER
+    / "images"
+    / "output"
+    / "Homework3"
+    / "part2"
+)
+
+#fish classes
+CLASS_NAMES = [
+    "Beta",
+    "Cray",
+    "Discuss",
+    "Gold",
+    "Guppy",
+    "Oscar",
+]
+
+# Image file types that will be accepted for erro rhandling
+IMAGE_EXTENSIONS = [
+    ".jpg",
+    ".jpeg",
+    ".jfif",
+    ".png",
+    ".bmp",
+]
+
+
+def find_images():
+    """
+    find every fish image and give each class a number.
+    """
+
+    records = []
+
+    for label, class_name in enumerate(CLASS_NAMES):
+        class_folder = FISH_FOLDER / class_name
+
+        if not class_folder.exists():
+            raise FileNotFoundError(
+                f"Missing class folder: {class_folder}"
+            )
+
+        for image_path in class_folder.rglob("*"):
+            if image_path.suffix.lower() in IMAGE_EXTENSIONS:
+                records.append(
+                    {
+                        "filepath": str(image_path),
+                        "label": label,
+                        "class_name": class_name,
+                    }
+                )
+
+    dataframe = pd.DataFrame(records)
+
+    if dataframe.empty:
+        raise ValueError(
+            "No images were found in the fish folders."
+        )
+
+    return dataframe
+
+
+def split_dataset(dataframe):
+    """
+    Split the images into 70% training,
+    15% validation, and 15% testing.
+    """
+
+    train_data, remaining_data = train_test_split(
+        dataframe,
+        test_size=0.30,
+        random_state=SEED,
+        stratify=dataframe["label"],
+    )
+
+    validation_data, test_data = train_test_split(
+        remaining_data,
+        test_size=0.50,
+        random_state=SEED,
+        stratify=remaining_data["label"],
+    )
+
+    return train_data, validation_data, test_data
+
+
+def load_image(filepath, label):
+    """
+    load an image and complete all required preprocssseing steps
+    """
+
+    image = tf.io.read_file(filepath)
+
+    image = tf.io.decode_image(
+        image,
+        channels=3,
+        expand_animations=False,
+    )
+
+    image.set_shape([None, None, 3])
+
+    image = tf.image.resize(
+        image,
+        IMAGE_SIZE,
+    )
+
+    image = tf.cast(
+        image,
+        tf.float32,
+    )
+
+    # Changes pixel values from 0-255 to 0-1
+    image = image / 255.0
+
+    return image, label
+
+
+def augment_image(image, label):
+    """
+    Rand. change training images.
+    """
+
+    image = tf.image.random_flip_left_right(
+        image,
+        seed=SEED,
+    )
+
+    image = tf.image.random_brightness(
+        image,
+        max_delta=0.15,
+        seed=SEED,
+    )
+
+    image = tf.image.rot90(
+        image,
+        k=tf.random.uniform(
+            shape=[],
+            minval=0,
+            maxval=4,
+            dtype=tf.int32,
+            seed=SEED,
+        ),
+    )
+
+    image = tf.clip_by_value(
+        image,
+        0.0,
+        1.0,
+    )
+
+    return image, label
+
+
+def create_tensorflow_dataset(dataframe, training=False):
+    """
+    Convert a dataframe into a TensorFlow dataset
+    """
+
+    dataset = tf.data.Dataset.from_tensor_slices(
+        (
+            dataframe["filepath"].values,
+            dataframe["label"].values,
+        )
+    )
+
+    if training:
+        dataset = dataset.shuffle(
+            buffer_size=len(dataframe),
+            seed=SEED,
+        )
+
+    dataset = dataset.map(
+        load_image,
+        num_parallel_calls=tf.data.AUTOTUNE,
+    )
+
+    if training:
+        dataset = dataset.map(
+            augment_image,
+            num_parallel_calls=tf.data.AUTOTUNE,
+        )
+
+    dataset = dataset.batch(BATCH_SIZE)
+
+    dataset = dataset.prefetch(
+        tf.data.AUTOTUNE
+    )
+
+    return dataset
+
+
+def save_split_files(
+    train_data,
+    validation_data,
+    test_data,
+):
+    """
+    Save the 3 dataset splits as CSV file
+    """
+
+    OUTPUT_FOLDER.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    train_data.to_csv(
+        OUTPUT_FOLDER / "train_split.csv",
+        index=False,
+    )
+
+    validation_data.to_csv(
+        OUTPUT_FOLDER / "validation_split.csv",
+        index=False,
+    )
+
+    test_data.to_csv(
+        OUTPUT_FOLDER / "test_split.csv",
+        index=False,
+    )
+
+
+def save_augmentation_preview(train_dataset):
+    """
+    save a picture showing augmented training images to act as a preview of the proceses
+    """
+
+    images, labels = next(iter(train_dataset))
+
+    plt.figure(figsize=(8, 8))
+
+    for index in range(min(9, len(images))):
+        plt.subplot(3, 3, index + 1)
+
+        plt.imshow(images[index].numpy())
+
+        label = int(labels[index].numpy())
+
+        plt.title(CLASS_NAMES[label])
+
+        plt.axis("off")
+
+    plt.tight_layout()
+
+    plt.savefig(
+        OUTPUT_FOLDER / "augmentation_preview.png"
+    )
+
+    plt.close()
+
+
+def print_split_information(
+    train_data,
+    validation_data,
+    test_data,
+):
+    """
+    Print info about the dataset splits for error handling and verification of processes.
+    """
+
+    total_images = (
+        len(train_data)
+        + len(validation_data)
+        + len(test_data)
+    )
+
+    print("\nDataset Split")
+    print("------------------------------")
+
+    print(
+        f"Total images: {total_images}"
+    )
+
+    print(
+        f"Training images: {len(train_data)}"
+    )
+
+    print(
+        f"Validation images: {len(validation_data)}"
+    )
+
+    print(
+        f"Testing images: {len(test_data)}"
+    )
+
+    print("\nTraining class counts:")
+
+    print(
+        train_data["class_name"]
+        .value_counts()
+        .sort_index()
+    )
+
+    print("\nValidation class counts:")
+
+    print(
+        validation_data["class_name"]
+        .value_counts()
+        .sort_index()
+    )
+
+    print("\nTesting class counts:")
+
+    print(
+        test_data["class_name"]
+        .value_counts()
+        .sort_index()
+    )
+
+
+def main():
+    """
+    run the complete pipeline.
+    """
+
+    tf.keras.utils.set_random_seed(SEED)
+
+    print("Homework Three Fish Data Pipeline")
+    print("----------------------------------")
+
+    print(f"Fish folder: {FISH_FOLDER}")
+
+    # Find the image files
+    all_images = find_images()
+
+    print(
+        f"Total images found: {len(all_images)}"
+    )
+
+    # Create the 70/15/15 split
+    train_data, validation_data, test_data = (
+        split_dataset(all_images)
+    )
+
+    print_split_information(
+        train_data,
+        validation_data,
+        test_data,
+    )
+
+    # Save the split information
+    save_split_files(
+        train_data,
+        validation_data,
+        test_data,
+    )
+
+    # Create TensorFlow datasets
+    train_dataset = create_tensorflow_dataset(
+        train_data,
+        training=True,
+    )
+
+    validation_dataset = create_tensorflow_dataset(
+        validation_data,
+        training=False,
+    )
+
+    test_dataset = create_tensorflow_dataset(
+        test_data,
+        training=False,
+    )
+
+    # Check one batch from each dataset
+    train_images, train_labels = next(
+        iter(train_dataset)
+    )
+
+    validation_images, validation_labels = next(
+        iter(validation_dataset)
+    )
+
+    test_images, test_labels = next(
+        iter(test_dataset)
+    )
+
+    print("\nTensorFlow Dataset Information")
+    print("------------------------------")
+
+    print(
+        f"Training batch shape: {train_images.shape}"
+    )
+
+    print(
+        f"Validation batch shape: "
+        f"{validation_images.shape}"
+    )
+
+    print(
+        f"Testing batch shape: {test_images.shape}"
+    )
+
+    print(
+        f"Minimum training pixel value: "
+        f"{tf.reduce_min(train_images).numpy():.2f}"
+    )
+
+    print(
+        f"Maximum training pixel value: "
+        f"{tf.reduce_max(train_images).numpy():.2f}"
+    )
+
+    save_augmentation_preview(
+        train_dataset
+    )
+
+    print("\nThe preprocessing pipeline is complete.")
+
+    print(
+        f"Results were saved in: {OUTPUT_FOLDER}"
+    )
+
+
+if __name__ == "__main__":
+    main()

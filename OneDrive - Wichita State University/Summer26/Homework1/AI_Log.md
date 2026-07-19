@@ -136,3 +136,15 @@ Can you write a quick function to randomly pull 6 images and put them into a sep
 Gave me a code block and an extended skeleton template for me to implement into the readme
 **Change:**
 Added the samples and the skeleton to the readme after implementing the code block and running the program
+
+## Entry 0
+
+**Date and Time:** 07/19/2026, 8:30
+
+**Prompt:** I need help with this code according to the attached project files and description. I'm just a bit lost, using new code, and would like for you to explain each part to me and how I need to work through it
+
+**Tool:** ChatGPT
+
+**Response Synopsis:** ChatGPT simplified the fish preprocessing program instructions and gave me a clear pipeline that I could follow to complete the project including tips about the code and how I can optimize and simplify it
+
+**Change:** Simplified the Homework Three preprocessing script and used it to create the training, validation, and testing datasets.

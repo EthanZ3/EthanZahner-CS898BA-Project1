@@ -255,3 +255,40 @@ The multi-channel normalized image made the original dark image much brighter an
 Overall, K-Means was the best method for this image set because it used color information instead of only grayscale intensity. It had the highest overlap with the ground truth mask and preserved more of the central figure. Even though the score was still not very high, it was the most successful of the three methods. I found that the image is difficult to segment because the figure is dark, the background is complex, and several background objects have similar brightness or contrast after normalization.
 
 ![Comparison plot](segmentation_comparison_plot.png)
+
+# Homework 3 Part 2
+## Part 2: Fish Classification
+
+## Dataset
+
+The fish dataset is stored in:
+
+images/input/Homework3/Fish/
+## Data Preprocessing
+
+The preprocessing program is located at:
+
+src/homework3_part2_data_pipeline.py
+
+The program performs the following steps:
+
+1. Loads the fish image paths.
+2. Creates a stratified 70/15/15 split.
+3. Resizes each image to 128 by 128 pixels.
+4. Normalizes pixel values to the range 0 through 1.
+5. Applies data augmentation to the training images.
+6. Creates TensorFlow datasets.
+7. Saves CSV files containing the dataset splits.
+8. Saves an augmentation preview image.
+
+## Running the Program
+
+Activate the virtual environment:
+
+```powershell
+.\.venv-hw3\Scripts\Activate.ps1
+python src\homework3_part2_data_pipeline.py
+
+The results are saved in:
+
+images/output/Homework3/part2/

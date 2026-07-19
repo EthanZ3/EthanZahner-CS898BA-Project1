@@ -1,5 +1,9 @@
 .venv/
+.venv-hw3/
 __pycache__/
 *.pyc
 .DS_Store
 .vscode/
+models/Homework3/checkpoints/
+images/output/Homework3/tensorboard/
+*.tfevents.*
