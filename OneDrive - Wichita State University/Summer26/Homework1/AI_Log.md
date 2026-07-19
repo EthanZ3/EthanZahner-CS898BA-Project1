@@ -137,7 +137,7 @@ Gave me a code block and an extended skeleton template for me to implement into 
 **Change:**
 Added the samples and the skeleton to the readme after implementing the code block and running the program
 
-## Entry 0
+## Entry 9
 
 **Date and Time:** 07/19/2026, 8:30
 
@@ -148,3 +148,15 @@ Added the samples and the skeleton to the readme after implementing the code blo
 **Response Synopsis:** ChatGPT simplified the fish preprocessing program instructions and gave me a clear pipeline that I could follow to complete the project including tips about the code and how I can optimize and simplify it
 
 **Change:** Simplified the Homework Three preprocessing script and used it to create the training, validation, and testing datasets.
+
+## Entry 10
+
+**Date and Time:** 07/19/2026, 12:47
+
+**Prompt:** My hyperparameter tuning program is taking a long time because it needs to train 12 different models. How can I shorten the process without removing any of the required learning rates, batch sizes, or dropout rates?
+
+**Tool:** ChatGPT
+
+**Response Synopsis:** ChatGPT recommended limiting each experiment to eight epochs and adding early stopping with a patience of two epochs. This allowed weak configurations to stop when validation loss was no longer improving while still testing all 12 required combinations.
+
+**Change:** Added early stopping and limited each tuning experiment to eight epochs to reduce training time.

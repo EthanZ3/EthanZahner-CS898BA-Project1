@@ -327,3 +327,45 @@ models/Homework3/baseline_cnn.weights.h5
 The training history, test results, and training curves are located at:
 
 images/output/Homework3/part3/
+
+# Homework 4 Part 4
+## Part 4: Hyperparameter Optimization
+
+A MANUAL GRID search was used to tune the baseline CNN.
+
+The following hyperparameters were tested:
+
+Learning Rate:
+- 0.01
+- 0.001
+- 0.0001
+
+Batch Size:
+- 32
+- 64
+
+Dropout Rate:
+- 0.3
+- 0.5
+
+A total of 12 hyperparameter combinations were tested. Each model was trained for up to eight epochs and eEarly stopping was used when the validation loss stopped improving, the best model was selected using the lowest validation loss.
+
+## Best Configuration
+
+Learning rate: 0.001
+Batch size: 32
+Dropout rate: 0.5
+Validation loss: 0.6461
+Validation accuracy: 0.8026
+Test loss: 0.6009
+Test accuracy: 0.7647
+
+
+The best complete model is stored at:
+models/Homework3/best_tuned_model.keras
+
+The best model weights are stored at:
+models/Homework3/best_tuned_model.weights.h5
+
+The experiment results are stored at:
+images/output/Homework3/part4/

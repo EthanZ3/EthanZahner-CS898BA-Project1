@@ -1,0 +1,9 @@
+{
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "dropout_rate": 0.5,
+    "validation_loss": 0.6461282968521118,
+    "validation_accuracy": 0.8026315569877625,
+    "test_loss": 0.6008862257003784,
+    "test_accuracy": 0.7647058963775635
+}

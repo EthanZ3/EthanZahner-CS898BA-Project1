@@ -1,0 +1,9 @@
+Best Hyperparameter Configuration
+---------------------------------
+Learning rate: 0.001
+Batch size: 32
+Dropout rate: 0.5
+Validation loss: 0.6461
+Validation accuracy: 0.8026
+Test loss: 0.6009
+Test accuracy: 0.7647
