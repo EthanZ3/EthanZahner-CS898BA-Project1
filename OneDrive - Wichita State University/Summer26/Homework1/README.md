@@ -369,3 +369,34 @@ models/Homework3/best_tuned_model.weights.h5
 
 The experiment results are stored at:
 images/output/Homework3/part4/
+
+# Homework 3 Part 5: Evaluation and Analysis
+
+The baseline and optimized CNN models were evaluated using the same held-out test set containing 153 fish images.
+
+### Quantitative Comparison
+
+| Model     | Accuracy | Weighted Precision | Weighted Recall | Weighted F1-Score |
+| Baseline  | 0.8301   | 0.8322             | 0.8301          | 0.8264            |
+| Optimized | 0.7647   | 0.7610             | 0.7647          | 0.7557            |
+
+The baseline CNN achieved the stronger overall test performance. It correctly classified approximately 83.01% of the test images, compared with 76.47% for the optimized model. While the optimized model performed best on the Discuss and Guppy classes by having correctly classified 26 of 30 Discuss images and all 29 Guppy images. It had a difficult time with its weakest classes which were Cray and Oscar. Only 4 of 12 Cray images were classified correctly, with 7 incorrectly classified as Guppy and 10 of 22 Oscar images were classified correctly, with several incorrectly classified as Beta or Cray.
+
+Complete class-level precision, recall, F1-score, and support values are available in:
+
+- images/output/Homework3/part5/baseline_classification_report.csv
+- images/output/Homework3/part5/optimized_classification_report.csv
+
+### Qualitative Analysis
+
+Random horizontal flipping helped the models learn that a fish facing left or right should still belong to the same class. Minor rotations reduced dependence on one exact image orientation, while brightness adjustments helped take into account differences in lighting. These transformations increased the variety of the training data and helped reduce memorization. However, random augmentation also introduced some normal variation in validation accuracy and loss between the epochs, but to my understanding, not by any margin that is greater than average.
+
+The best configuration found during grid search used a learning rate of 0.001, a batch size of 32, and a dropout rate of 0.5. This configuration produced the lowest validation loss among the 12 combinations tested. The learning rate of 0.001 allowed the model to converge more reliably than the larger learning rate while learning faster than the smallest value. The 0.5 dropout rate provided stronger regularization, and the batch size of 32 was part of the best-performing configuration.
+
+The optimized models recreated training history reached its lowest validation loss near epoch 6. After that point, training loss continued to decrease while validation loss increased, indicating that overfitting was beginning. Early stopping and restoring the best weights were therefore useful for selecting the strongest version of the model. Although the optimized configuration had the lowest validation loss during tuning, it did not outperform the baseline model on the held-out test set. The baseline had higher accuracy, precision, recall, and F1-score. This shows that improved validation performance during hyperparameter selection does not always guarantee improved performance on unseen test data.
+
+The optimized training curves shown below were recreated by training the winning configuration again because the original Part 4 training history was not saved. The original saved optimized model was still used for the classification report and confusion matrix.
+
+### Evaluation Visualization
+![Model Evaluation Grid](model_evaluation_grid.png)
+For some reason I cannot get this image to display properly so I have submitted it along with the github link

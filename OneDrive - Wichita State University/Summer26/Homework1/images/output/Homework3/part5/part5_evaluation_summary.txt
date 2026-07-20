@@ -1,0 +1,19 @@
+Qualitative Analysis
+--------------------
+Random horizontal flipping helped the model learn that fish direction should not determine the class. Minor rotations reduced dependence on exact image orientation. Brightness adjustment helped the model handle lighting differences. These transformations also added variation to the training set, although they also caused some normal fluctuation in validation loss.
+
+The best tuning configuration used a learning rate of 0.001, a batch size of 32, and a dropout rate of 0.5. The learning rate of 0.001 provided the strongest balance between fast learning and stable validation results. A dropout rate of 0.5 helped reduce overfitting more than 0.3 in the best-performing experiments. The batch size of 32 also performed better than 64 for the winning configuration.
+
+The optimized model did not outperform the baseline on the held-out test set. This shows that selecting a model by the lowest validation loss does not guarantee a higher final test accuracy.
+
+Quantitative Comparison
+-----------------------
+Baseline accuracy: 0.8301
+Baseline precision: 0.8322
+Baseline recall: 0.8301
+Baseline F1-score: 0.8264
+
+Optimized accuracy: 0.7647
+Optimized precision: 0.7610
+Optimized recall: 0.7647
+Optimized F1-score: 0.7557
